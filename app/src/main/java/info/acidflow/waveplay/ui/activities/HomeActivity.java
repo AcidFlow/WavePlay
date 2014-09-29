@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 
+import info.acidflow.waveplay.R;
 import info.acidflow.waveplay.ui.fragments.NavigationDrawerFragment;
 
 
