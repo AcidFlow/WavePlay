@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,7 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 
+import java.io.IOException;
+
 import info.acidflow.waveplay.R;
+import info.acidflow.waveplay.service.WavePlayServerService;
 import info.acidflow.waveplay.ui.fragments.NavigationDrawerFragment;
 
 
@@ -31,6 +35,12 @@ public class HomeActivity extends Activity
     private CharSequence mTitle;
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService( new Intent( this, WavePlayServerService.class ) );
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
@@ -43,6 +53,8 @@ public class HomeActivity extends Activity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        startService( new Intent( this, WavePlayServerService.class ) );
     }
 
     @Override

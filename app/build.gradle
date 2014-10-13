@@ -1,16 +1,33 @@
 apply plugin: 'com.android.application'
 
+
+
 android {
     compileSdkVersion 20
     buildToolsVersion "20.0.0"
 
     defaultConfig {
-        applicationId "waveplay.acidflow.info.myapplication"
+        applicationId "info.acidflow.waveplay"
         minSdkVersion 15
         targetSdkVersion 20
         versionCode 1
         versionName "1.0"
+
+
     }
+
+    sourceSets {
+        main {
+            java {
+                srcDirs = ['src/main/java', 'src/3rd_party/nanohttpd/core/src/main/java']
+            }
+            resources {
+                srcDir 'src/resources'
+            }
+        }
+
+    }
+
     buildTypes {
         release {
             runProguard false
@@ -22,4 +39,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:support-v4:20.0.0'
+    compile 'com.squareup.retrofit:retrofit:1.7.0'
 }
+
