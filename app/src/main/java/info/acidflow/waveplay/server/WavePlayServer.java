@@ -24,7 +24,7 @@ public class WavePlayServer extends NanoHTTPD {
 
     @Override
     public Response serve(IHTTPSession session) {
-        return WavePlayServerResponseFactory.generateResponse( session ).buildResponse();
+        return WavePlayServerResponseFactory.generateResponse( session );
     }
 
     public boolean startServer(){

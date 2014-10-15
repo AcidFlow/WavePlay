@@ -6,7 +6,9 @@ import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import fi.iki.elonen.NanoHTTPD;
 import info.acidflow.waveplay.server.contants.HttpHeaders;
@@ -18,26 +20,38 @@ import info.acidflow.waveplay.server.model.GsonFile;
 public class ListResponse extends AbstractWavePlayResponse {
 
     final public static String URI_PATH = "/list";
+    final public static String PARAM_FOLDER = "folder";
+    private Map< String, String > mParams;
 
-    private List<GsonFile> listMusicDir(){
+    public ListResponse( Map<String, String> params ){
+        super();
+        mParams = params;
+    }
+
+    private List< GsonFile > listDirectory( String directoryPath ){
         List< GsonFile > gsonFiles = new ArrayList<GsonFile>();
-        File sdcard = Environment.getExternalStorageDirectory();
-        File musicDir = new File( "" /* Directory */ );
-        if( musicDir.exists() && musicDir.isDirectory() ){
-           File[] files = musicDir.listFiles();
+        File folder = new File( directoryPath );
+        if( folder.exists() && folder.canRead() && folder.isDirectory()  ){
+            File[] files = folder.listFiles();
             for( File f : files ){
-                gsonFiles.add( new GsonFile( f.getName(), f.isDirectory() ) );
+                gsonFiles.add( new GsonFile( f ) );
             }
         }
         return gsonFiles;
     }
 
+
+
     @Override
     public NanoHTTPD.Response buildResponse() {
         Gson gson = new Gson();
+        String folder = mParams.get(PARAM_FOLDER);
+        if( folder == null ){
+            folder = Environment.getExternalStorageDirectory().getAbsolutePath();
+        }
         NanoHTTPD.Response response = new NanoHTTPD.Response(NanoHTTPD.Response.Status.OK,
                 HttpHeaders.ContentType.CONTENT_TYPE_APPLICATION_JSON,
-                gson.toJson( listMusicDir() ) );
+                gson.toJson( listDirectory( folder ) ) );
         return response;
     }
 }
