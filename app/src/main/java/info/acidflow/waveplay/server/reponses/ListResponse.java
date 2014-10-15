@@ -34,7 +34,9 @@ public class ListResponse extends AbstractWavePlayResponse {
         if( folder.exists() && folder.canRead() && folder.isDirectory()  ){
             File[] files = folder.listFiles();
             for( File f : files ){
-                gsonFiles.add( new GsonFile( f ) );
+                if( f.canRead() ) {
+                    gsonFiles.add( new GsonFile( f ) );
+                }
             }
         }
         return gsonFiles;

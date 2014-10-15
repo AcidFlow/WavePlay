@@ -22,9 +22,11 @@ public class FileUtils {
             mime = URLConnection.guessContentTypeFromName(file.getName());
             if (mime == null) {
                 try {
-                    InputStream is = new BufferedInputStream(new FileInputStream(file));
-                    mime = URLConnection.guessContentTypeFromStream(is);
-                    is.close();
+                    if( file.canRead() ) {
+                        InputStream is = new BufferedInputStream(new FileInputStream(file));
+                        mime = URLConnection.guessContentTypeFromStream(is);
+                        is.close();
+                    }
                 } catch (IOException e) {
                     Log.e(LOG_TAG, "I/O Error", e);
                 }
