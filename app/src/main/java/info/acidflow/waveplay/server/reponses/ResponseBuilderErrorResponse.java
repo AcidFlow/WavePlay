@@ -17,6 +17,8 @@ public class ResponseBuilderErrorResponse extends AbstractWavePlayResponse {
 
     @Override
     public NanoHTTPD.Response buildResponse() {
-        return new NanoHTTPD.Response( NanoHTTPD.Response.Status.INTERNAL_ERROR, NanoHTTPD.MIME_PLAINTEXT, mException.getMessage() );
+        return new NanoHTTPD.Response( NanoHTTPD.Response.Status.INTERNAL_ERROR,
+                NanoHTTPD.MIME_PLAINTEXT, mException.getMessage()
+        );
     }
 }

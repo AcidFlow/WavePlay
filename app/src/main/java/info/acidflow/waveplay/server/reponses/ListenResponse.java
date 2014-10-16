@@ -31,7 +31,9 @@ public class ListenResponse extends AbstractWavePlayResponse {
         try {
             FileInputStream is = new FileInputStream( music );
             NanoHTTPD.Response response = new NanoHTTPD.Response(NanoHTTPD.Response.Status.OK,
-                    HttpHeaders.ContentType.CONTENT_TYPE_PREFIX + FileUtils.guessMimeType( music ), is );
+                    HttpHeaders.ContentType.CONTENT_TYPE_PREFIX + FileUtils.guessMimeType( music ),
+                    is
+            );
             return response;
         } catch (FileNotFoundException e) {
             throw new ResponseBuilderException( e );

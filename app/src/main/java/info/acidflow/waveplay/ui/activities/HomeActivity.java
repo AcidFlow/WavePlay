@@ -6,7 +6,9 @@ import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,6 +40,7 @@ public class HomeActivity extends Activity
     protected void onDestroy() {
         super.onDestroy();
         stopService( new Intent( this, WavePlayServerService.class ) );
+
     }
 
     @Override
@@ -55,6 +58,8 @@ public class HomeActivity extends Activity
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
         startService( new Intent( this, WavePlayServerService.class ) );
+
+
     }
 
     @Override
