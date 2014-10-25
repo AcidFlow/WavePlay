@@ -30,8 +30,8 @@ public class FileExplorerPresenterImpl extends Fragment implements FileExplorerP
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onStart() {
+        super.onStart();
         if( mFileExplorerInteractor instanceof Fragment ){
             getFragmentManager().beginTransaction()
                     .add((Fragment) mFileExplorerInteractor, String.valueOf(mFileExplorerInteractor.getClass().hashCode()))
@@ -44,7 +44,7 @@ public class FileExplorerPresenterImpl extends Fragment implements FileExplorerP
         super.onPause();
         getFragmentManager().beginTransaction()
                 .remove((Fragment) mFileExplorerInteractor)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     @Override

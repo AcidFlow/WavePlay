@@ -59,11 +59,6 @@ public class FileExplorerFragment extends Fragment implements
         if( savedInstanceState != null ){
             mCurrentDirectory = savedInstanceState.getString(SAVED_STATE_CURRENT_DIRECTORY, null );
         }
-        if( mPresenter instanceof Fragment ){
-            getFragmentManager().beginTransaction()
-                    .add( ( Fragment ) mPresenter, String.valueOf(mPresenter.getClass().hashCode()))
-                    .commit();
-        }
     }
 
     @Override
@@ -88,11 +83,21 @@ public class FileExplorerFragment extends Fragment implements
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        if( mPresenter instanceof Fragment ){
+            getFragmentManager().beginTransaction()
+                    .add( ( Fragment ) mPresenter, String.valueOf(mPresenter.getClass().hashCode()))
+                    .commit();
+        }
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         getFragmentManager().beginTransaction()
                 .remove( (Fragment) mPresenter )
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     @Override
