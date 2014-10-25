@@ -66,6 +66,11 @@ public class FileExplorerPresenterImpl extends Fragment implements FileExplorerP
     }
 
     @Override
+    public String getCurrentRootDirectory() {
+        return mRootDirectory;
+    }
+
+    @Override
     public boolean onBackPressed() {
         if( mRootDirectory == null || mRootDirectory.equals( Environment.getExternalStorageDirectory().getAbsolutePath() )){
             return false;
@@ -74,4 +79,5 @@ public class FileExplorerPresenterImpl extends Fragment implements FileExplorerP
             return true;
         }
     }
+
 }

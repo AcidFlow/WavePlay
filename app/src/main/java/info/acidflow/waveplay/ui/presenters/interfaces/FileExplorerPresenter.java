@@ -17,4 +17,6 @@ public interface FileExplorerPresenter {
 
     public boolean onBackPressed();
 
+    public String getCurrentRootDirectory();
+
 }

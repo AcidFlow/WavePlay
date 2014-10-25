@@ -95,6 +95,7 @@ public class FileExplorerFragment extends Fragment implements
     @Override
     public void onPause() {
         super.onPause();
+        mCurrentDirectory = mPresenter.getCurrentRootDirectory();
         getFragmentManager().beginTransaction()
                 .remove( (Fragment) mPresenter )
                 .commitAllowingStateLoss();
@@ -114,8 +115,7 @@ public class FileExplorerFragment extends Fragment implements
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        mCurrentDirectory = mAdapter.getItem(i).getFilePath();
-        mPresenter.getFilesFromDirectory(mCurrentDirectory);
+        mPresenter.getFilesFromDirectory( mAdapter.getItem(i).getFilePath() );
     }
 
     @Override
