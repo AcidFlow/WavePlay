@@ -1,46 +1,75 @@
 package info.acidflow.waveplay.ui.fragments;
 
 import android.app.Fragment;
-import android.app.LoaderManager;
-import android.content.Loader;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import info.acidflow.waveplay.R;
-import info.acidflow.waveplay.loaders.FilesLoader;
+import info.acidflow.waveplay.listeners.OnBackPressedListener;
 import info.acidflow.waveplay.server.model.GsonFile;
+import info.acidflow.waveplay.ui.adapters.FileExplorerAdapter;
+import info.acidflow.waveplay.ui.presenters.impl.FileExplorerPresenterImpl;
+import info.acidflow.waveplay.ui.presenters.interfaces.FileExplorerPresenter;
+import info.acidflow.waveplay.ui.views.interfaces.FileExplorerView;
 
 /**
  * Created by paul on 16/10/14.
  */
-public class FileExplorerFragment extends Fragment
-        implements LoaderManager.LoaderCallbacks< List< GsonFile > >,
-        AdapterView.OnItemClickListener {
+public class FileExplorerFragment extends Fragment implements
+        AdapterView.OnItemClickListener, FileExplorerView, OnBackPressedListener {
 
     final public static String LOG_TAG = FileExplorerFragment.class.getSimpleName();
-
-    final private static String FILE_LOADER_ROOT_DIR_ARG = "file_loader_root_dir_arg";
+    final public static String SAVED_STATE_CURRENT_DIRECTORY = "saved_state_current_directory";
 
     @InjectView( R.id.file_explorer_list_view )
     protected ListView mFilesListView;
 
+    @InjectView( R.id.loading )
+    protected ProgressBar mLoading;
+
+    private FileExplorerPresenter mPresenter;
+    private ArrayAdapter< GsonFile > mAdapter;
+    private String mCurrentDirectory = null;
+
+    public FileExplorerFragment() {
+        super();
+        mPresenter = FileExplorerPresenterImpl.newInstance( this );
+    }
+
     public static FileExplorerFragment newInstance(){
-        return new FileExplorerFragment();
+        FileExplorerFragment f = new FileExplorerFragment();
+        return f;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if( savedInstanceState != null ){
+            mCurrentDirectory = savedInstanceState.getString(SAVED_STATE_CURRENT_DIRECTORY, null );
+        }
+        if( mPresenter instanceof Fragment ){
+            getFragmentManager().beginTransaction()
+                    .add( ( Fragment ) mPresenter, String.valueOf(mPresenter.getClass().hashCode()))
+                    .commit();
+        }
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mAdapter = new FileExplorerAdapter( getActivity(), R.layout.list_item_file_explorer, new ArrayList<GsonFile>() );
     }
 
     @Nullable
@@ -54,13 +83,22 @@ public class FileExplorerFragment extends Fragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // TODO Instantiate adapters
+        mFilesListView.setAdapter( mAdapter );
+        mFilesListView.setOnItemClickListener( this );
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader( FilesLoader.LOADER_ID, null, this );
+    public void onPause() {
+        super.onPause();
+        getFragmentManager().beginTransaction()
+                .remove( (Fragment) mPresenter )
+                .commit();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(SAVED_STATE_CURRENT_DIRECTORY, mCurrentDirectory);
     }
 
     @Override
@@ -70,32 +108,43 @@ public class FileExplorerFragment extends Fragment
     }
 
     @Override
-    public Loader<List<GsonFile>> onCreateLoader(int i, Bundle bundle) {
-        String rootDir = null;
-        if( bundle != null ) {
-            rootDir = bundle.getString( FILE_LOADER_ROOT_DIR_ARG );
-        }
-        return new FilesLoader( getActivity(), rootDir );
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<GsonFile>> listLoader, List<GsonFile> gsonFiles) {
-        Log.i(LOG_TAG, "Loading done" );
-        if( gsonFiles == null ){
-            Log.e(LOG_TAG, "Error occured during listing directory" );
-        }else{
-            Log.i(LOG_TAG, "List size : " + gsonFiles.size() );
-            // TODO Set new data to the adapter
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<GsonFile>> listLoader) {
-
-    }
-
-    @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        //TODO restart the loader with the new root directory if it's a directory or play the file
+        mCurrentDirectory = mAdapter.getItem(i).getFilePath();
+        mPresenter.getFilesFromDirectory(mCurrentDirectory);
     }
+
+    @Override
+    public void showProgress() {
+        if( isAdded() ) {
+            mLoading.setVisibility(View.VISIBLE);
+            mFilesListView.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void hideProgress() {
+        if( isAdded() ) {
+            mLoading.setVisibility(View.GONE);
+            mFilesListView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void showData(List<GsonFile> files) {
+        if( isAdded() ) {
+            mAdapter = new FileExplorerAdapter(getActivity(), R.layout.list_item_file_explorer, files);
+            mFilesListView.setAdapter(mAdapter);
+        }
+    }
+
+    @Override
+    public void onPresenterReady() {
+        mPresenter.getFilesFromDirectory(mCurrentDirectory);
+    }
+
+    @Override
+    public boolean onBackPressedCaught() {
+        return mPresenter.onBackPressed();
+    }
+
 }

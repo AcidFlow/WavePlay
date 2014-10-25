@@ -1,15 +1,8 @@
 package info.acidflow.waveplay.server.model;
 
-import android.util.Log;
-
 import com.google.gson.annotations.SerializedName;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLConnection;
 
 import info.acidflow.waveplay.util.FileUtils;
 
@@ -23,6 +16,9 @@ public class GsonFile {
     @SerializedName("fileName")
     private String mFileName;
 
+    @SerializedName("filePath")
+    private String mFilePath;
+
     @SerializedName("isDirectory")
     private boolean isDirectory;
 
@@ -31,10 +27,25 @@ public class GsonFile {
 
 
     public GsonFile( File file ) {
+        mFilePath = file.getAbsolutePath();
         mFileName = file.getName() ;
         isDirectory = file.isDirectory() ;
         mMimeType = FileUtils.guessMimeType( file );
     }
 
+    public String getFileName() {
+        return mFileName;
+    }
 
+    public boolean isDirectory() {
+        return isDirectory;
+    }
+
+    public String getMimeType() {
+        return mMimeType;
+    }
+
+    public String getFilePath() {
+        return mFilePath;
+    }
 }

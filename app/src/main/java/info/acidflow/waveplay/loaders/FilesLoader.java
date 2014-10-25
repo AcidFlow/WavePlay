@@ -1,6 +1,5 @@
 package info.acidflow.waveplay.loaders;
 
-import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.os.Environment;
 

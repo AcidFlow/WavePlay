@@ -4,17 +4,12 @@ import android.os.Environment;
 
 import com.google.gson.Gson;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import fi.iki.elonen.NanoHTTPD;
 import info.acidflow.waveplay.exceptions.file.FileNotOnExternalStorageException;
 import info.acidflow.waveplay.exceptions.server.ResponseBuilderException;
 import info.acidflow.waveplay.server.contants.HttpHeaders;
-import info.acidflow.waveplay.server.model.GsonFile;
 import info.acidflow.waveplay.util.FileUtils;
 
 /**

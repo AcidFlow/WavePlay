@@ -1,24 +1,20 @@
 package info.acidflow.waveplay.ui.activities;
 
-import android.app.Activity;
-
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
-
-import java.io.IOException;
 
 import info.acidflow.waveplay.R;
+import info.acidflow.waveplay.listeners.OnBackPressedListener;
 import info.acidflow.waveplay.service.WavePlayServerService;
 import info.acidflow.waveplay.ui.fragments.FileExplorerFragment;
 import info.acidflow.waveplay.ui.fragments.NavigationDrawerFragment;
@@ -102,6 +98,15 @@ public class HomeActivity extends Activity
         actionBar.setTitle(mTitle);
     }
 
+
+    @Override
+    public void onBackPressed() {
+        Fragment current = getFragmentManager().findFragmentById( R.id.container );
+        if( !( current != null && ( current instanceof OnBackPressedListener )
+                && ( ( OnBackPressedListener ) current).onBackPressedCaught() ) ){
+            super.onBackPressed();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
