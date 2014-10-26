@@ -11,6 +11,8 @@ public interface FileExplorerPresenter {
 
     public void getFilesFromDirectory( String directoryPath );
 
+    public void openFile( String filePath );
+
     public void onDirectoryFilesListed( List< GsonFile > files );
 
     public void onInteractorReady();

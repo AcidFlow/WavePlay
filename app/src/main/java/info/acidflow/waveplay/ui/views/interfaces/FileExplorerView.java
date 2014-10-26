@@ -13,4 +13,6 @@ public interface FileExplorerView  extends LoadingView {
 
     public void onPresenterReady();
 
+    public void showCurrentlyPlaying();
+
 }

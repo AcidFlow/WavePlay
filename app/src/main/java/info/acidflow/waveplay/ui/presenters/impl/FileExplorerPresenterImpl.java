@@ -55,6 +55,11 @@ public class FileExplorerPresenterImpl extends Fragment implements FileExplorerP
     }
 
     @Override
+    public void openFile(String filePath) {
+        mFileExplorerInteractor.openFile( filePath );
+    }
+
+    @Override
     public void onDirectoryFilesListed( List<GsonFile> files ) {
         mFileExplorerView.hideProgress();
         mFileExplorerView.showData( files );

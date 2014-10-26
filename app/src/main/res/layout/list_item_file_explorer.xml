@@ -3,6 +3,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingStart="@dimen/spacing_default"
+    android:paddingEnd="@dimen/spacing_default"
     >
 
     <ImageView
@@ -18,6 +20,8 @@
         android:singleLine="true"
         android:layout_toEndOf="@+id/file_icon"
         android:layout_toRightOf="@+id/file_icon"
+        android:layout_marginStart="@dimen/spacing_default"
+        android:layout_marginLeft="@dimen/spacing_default"
         />
 
 </RelativeLayout>

@@ -4,23 +4,36 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
+import info.acidflow.waveplay.IWavePlayMusicService;
 import info.acidflow.waveplay.R;
 import info.acidflow.waveplay.listeners.OnBackPressedListener;
+import info.acidflow.waveplay.service.WavePlayAudioPlaybackService;
 import info.acidflow.waveplay.service.WavePlayServerService;
 import info.acidflow.waveplay.ui.fragments.FileExplorerFragment;
 import info.acidflow.waveplay.ui.fragments.NavigationDrawerFragment;
 
 
-public class HomeActivity extends Activity
+public class HomeActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     /**
@@ -33,6 +46,15 @@ public class HomeActivity extends Activity
      */
     private CharSequence mTitle;
 
+    @InjectView( R.id.home_activity_toolbar )
+    Toolbar mToolbar;
+
+    @InjectView( R.id.currently_playing_layout )
+    View mCurrentlyPlayingView;
+
+    @InjectView( R.id.currently_playing_title )
+    TextView mCurrentlyPlayingTitle;
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -44,7 +66,7 @@ public class HomeActivity extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
+        ButterKnife.inject( this );
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
@@ -52,7 +74,9 @@ public class HomeActivity extends Activity
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
+                (DrawerLayout) findViewById(R.id.drawer_layout),
+                mToolbar );
+        hideCurrentlyPlaying();
 
         startService( new Intent( this, WavePlayServerService.class ) );
 
@@ -173,4 +197,36 @@ public class HomeActivity extends Activity
         }
     }
 
+    // TODO Redo code below this point. It was for testing purpose
+    public void showCurrentlyPlaying(){
+        mCurrentlyPlayingView.setVisibility( View.VISIBLE );
+    }
+
+    public void hideCurrentlyPlaying(){
+        mCurrentlyPlayingView.setVisibility( View.GONE );
+    }
+
+    public void setCurrentlyPlayingTitle( String str ){
+        mCurrentlyPlayingTitle.setText( str );
+    }
+
+    @OnClick( R.id.currently_playing_pause )
+    public void pauseCurrentPlaying(){
+        Intent service = new Intent( this, WavePlayAudioPlaybackService.class );
+        bindService(service, new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+                try {
+                    ((IWavePlayMusicService) iBinder).pause();
+                } catch (RemoteException ignored) {
+
+                }
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName componentName) {
+
+            }
+        }, Context.BIND_AUTO_CREATE);
+    }
 }

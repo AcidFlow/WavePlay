@@ -1,6 +1,11 @@
 package info.acidflow.waveplay.dagger.modules;
 
+import android.content.Context;
+
+import javax.inject.Singleton;
+
 import dagger.Module;
+import dagger.Provides;
 import info.acidflow.waveplay.WavePlayApp;
 
 /**
@@ -19,7 +24,9 @@ public class AppModule {
         mApplication = app;
     }
 
-//    @Provides @Singleton public Context provideApplicationContext(){
+//    @Provides
+//    @Singleton
+//    public Context provideApplicationContext(){
 //        return mApplication;
 //    }
 

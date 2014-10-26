@@ -2,14 +2,24 @@ package info.acidflow.waveplay.ui.interactors.impl;
 
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
 
 import java.util.List;
 
+import info.acidflow.waveplay.IWavePlayMusicService;
+import info.acidflow.waveplay.WavePlayApp;
+import info.acidflow.waveplay.dagger.modules.AppModule;
 import info.acidflow.waveplay.loaders.FilesLoader;
 import info.acidflow.waveplay.server.model.GsonFile;
+import info.acidflow.waveplay.service.WavePlayAudioPlaybackService;
 import info.acidflow.waveplay.ui.interactors.interfaces.FileExplorerInteractor;
 import info.acidflow.waveplay.ui.presenters.interfaces.FileExplorerPresenter;
 
@@ -67,6 +77,27 @@ public class FileExplorerInteractorLoader extends Fragment implements FileExplor
         } else {
             getLoaderManager().restartLoader(FilesLoader.LOADER_ID, args, this);
         }
+    }
+
+    @Override
+    public void openFile(final String filePath) {
+        //TODO Redo the code below, it was for testing purpose
+        Intent service = new Intent( getActivity(), WavePlayAudioPlaybackService.class );
+        getActivity().bindService( service, new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+                try {
+                    ( ( IWavePlayMusicService) iBinder).openFile( filePath );
+                } catch (RemoteException ignored) {
+
+                }
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName componentName) {
+
+            }
+        }, Context.BIND_AUTO_CREATE );
     }
 
 }

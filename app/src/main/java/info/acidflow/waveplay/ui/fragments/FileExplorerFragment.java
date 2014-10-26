@@ -19,6 +19,7 @@ import butterknife.InjectView;
 import info.acidflow.waveplay.R;
 import info.acidflow.waveplay.listeners.OnBackPressedListener;
 import info.acidflow.waveplay.server.model.GsonFile;
+import info.acidflow.waveplay.ui.activities.HomeActivity;
 import info.acidflow.waveplay.ui.adapters.FileExplorerAdapter;
 import info.acidflow.waveplay.ui.presenters.impl.FileExplorerPresenterImpl;
 import info.acidflow.waveplay.ui.presenters.interfaces.FileExplorerPresenter;
@@ -115,7 +116,12 @@ public class FileExplorerFragment extends Fragment implements
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        mPresenter.getFilesFromDirectory( mAdapter.getItem(i).getFilePath() );
+        GsonFile file = mAdapter.getItem(i);
+        if( file.isDirectory() ) {
+            mPresenter.getFilesFromDirectory( file.getFilePath() );
+        }else{
+            mPresenter.openFile( file.getFilePath() );
+        }
     }
 
     @Override
@@ -142,6 +148,8 @@ public class FileExplorerFragment extends Fragment implements
         }
     }
 
+
+
     @Override
     public void onPresenterReady() {
         mPresenter.getFilesFromDirectory(mCurrentDirectory);
@@ -152,4 +160,10 @@ public class FileExplorerFragment extends Fragment implements
         return mPresenter.onBackPressed();
     }
 
+
+    // TODO Redo code below this point. It was for testing purpose
+    @Override
+    public void showCurrentlyPlaying() {
+        ((HomeActivity) getActivity()).showCurrentlyPlaying();
+    }
 }

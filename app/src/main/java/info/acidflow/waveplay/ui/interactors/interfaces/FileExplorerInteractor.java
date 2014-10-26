@@ -7,4 +7,6 @@ public interface FileExplorerInteractor {
 
     public void listFilesFromDirectory( String directoryPath );
 
+    public void openFile( String filePath );
+
 }
