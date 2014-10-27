@@ -1,5 +1,6 @@
 package info.acidflow.waveplay.ui.interactors.impl;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.ComponentName;
@@ -17,6 +18,7 @@ import java.util.List;
 import info.acidflow.waveplay.IWavePlayMusicService;
 import info.acidflow.waveplay.WavePlayApp;
 import info.acidflow.waveplay.dagger.modules.AppModule;
+import info.acidflow.waveplay.helpers.AudioPlaybackHelper;
 import info.acidflow.waveplay.loaders.FilesLoader;
 import info.acidflow.waveplay.server.model.GsonFile;
 import info.acidflow.waveplay.service.WavePlayAudioPlaybackService;
@@ -33,6 +35,7 @@ public class FileExplorerInteractorLoader extends Fragment implements FileExplor
     final private static String FILE_LOADER_ROOT_DIR_ARG = "file_loader_root_dir_arg";
 
     private FileExplorerPresenter mPresenter;
+    private AudioPlaybackHelper.AudioPlaybackServiceToken mAudioServiceToken;
 
     public static FileExplorerInteractorLoader newInstance( FileExplorerPresenter presenter ){
         FileExplorerInteractorLoader f = new FileExplorerInteractorLoader();
@@ -41,9 +44,21 @@ public class FileExplorerInteractorLoader extends Fragment implements FileExplor
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mAudioServiceToken = AudioPlaybackHelper.bindToService( activity, null );
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
         mPresenter.onInteractorReady();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        AudioPlaybackHelper.unbindFromService( mAudioServiceToken );
     }
 
     @Override
@@ -58,7 +73,6 @@ public class FileExplorerInteractorLoader extends Fragment implements FileExplor
             Log.e(LOG_TAG, "Error occured during listing directory" );
         }else{
             Log.i(LOG_TAG, "List size : " + gsonFiles.size() );
-            // TODO Set new data to the adapter
         }
         mPresenter.onDirectoryFilesListed( gsonFiles );
     }
@@ -81,23 +95,8 @@ public class FileExplorerInteractorLoader extends Fragment implements FileExplor
 
     @Override
     public void openFile(final String filePath) {
-        //TODO Redo the code below, it was for testing purpose
-        Intent service = new Intent( getActivity(), WavePlayAudioPlaybackService.class );
-        getActivity().bindService( service, new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                try {
-                    ( ( IWavePlayMusicService) iBinder).openFile( filePath );
-                } catch (RemoteException ignored) {
-
-                }
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName componentName) {
-
-            }
-        }, Context.BIND_AUTO_CREATE );
+        AudioPlaybackHelper.openFile( filePath );
     }
+
 
 }

@@ -9,4 +9,5 @@ interface IWavePlayMusicService {
     void stop();
     void play();
     void pause();
+    void playOrPause();
 }

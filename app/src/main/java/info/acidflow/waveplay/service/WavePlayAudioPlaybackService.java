@@ -62,7 +62,7 @@ public class WavePlayAudioPlaybackService extends Service {
         mMediaPlayer.start();
     }
 
-    public void pauseOrResume(){
+    public void playOrPause(){
         if( mMediaPlayer.isPlaying() ){
             mMediaPlayer.pause();
         }else{
@@ -97,12 +97,17 @@ public class WavePlayAudioPlaybackService extends Service {
 
         @Override
         public void pause(){
-            mServiceWeakRef.get().pauseOrResume();
+            mServiceWeakRef.get().playOrPause();
         }
 
         @Override
         public void play(){
             mServiceWeakRef.get().play();
+        }
+
+        @Override
+        public void playOrPause(){
+            mServiceWeakRef.get().playOrPause();
         }
 
 

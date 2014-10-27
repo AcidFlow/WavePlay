@@ -26,6 +26,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import info.acidflow.waveplay.IWavePlayMusicService;
 import info.acidflow.waveplay.R;
+import info.acidflow.waveplay.helpers.AudioPlaybackHelper;
 import info.acidflow.waveplay.listeners.OnBackPressedListener;
 import info.acidflow.waveplay.service.WavePlayAudioPlaybackService;
 import info.acidflow.waveplay.service.WavePlayServerService;
@@ -55,11 +56,13 @@ public class HomeActivity extends ActionBarActivity
     @InjectView( R.id.currently_playing_title )
     TextView mCurrentlyPlayingTitle;
 
+    private AudioPlaybackHelper.AudioPlaybackServiceToken mAudioPlaybackServiceToken;
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         stopService( new Intent( this, WavePlayServerService.class ) );
-
+        AudioPlaybackHelper.unbindFromService( mAudioPlaybackServiceToken );
     }
 
     @Override
@@ -77,7 +80,7 @@ public class HomeActivity extends ActionBarActivity
                 (DrawerLayout) findViewById(R.id.drawer_layout),
                 mToolbar );
         hideCurrentlyPlaying();
-
+        mAudioPlaybackServiceToken = AudioPlaybackHelper.bindToService( this, null );
         startService( new Intent( this, WavePlayServerService.class ) );
 
 
@@ -212,21 +215,6 @@ public class HomeActivity extends ActionBarActivity
 
     @OnClick( R.id.currently_playing_pause )
     public void pauseCurrentPlaying(){
-        Intent service = new Intent( this, WavePlayAudioPlaybackService.class );
-        bindService(service, new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                try {
-                    ((IWavePlayMusicService) iBinder).pause();
-                } catch (RemoteException ignored) {
-
-                }
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName componentName) {
-
-            }
-        }, Context.BIND_AUTO_CREATE);
+        AudioPlaybackHelper.playOrPause();
     }
 }

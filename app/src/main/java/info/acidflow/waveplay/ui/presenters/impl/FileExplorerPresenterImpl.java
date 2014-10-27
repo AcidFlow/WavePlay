@@ -56,6 +56,7 @@ public class FileExplorerPresenterImpl extends Fragment implements FileExplorerP
 
     @Override
     public void openFile(String filePath) {
+        mFileExplorerView.showCurrentlyPlaying();
         mFileExplorerInteractor.openFile( filePath );
     }
 
