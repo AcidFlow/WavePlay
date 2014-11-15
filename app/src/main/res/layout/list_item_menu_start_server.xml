@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent" 
+    tools:layout_width="298dp"
+    android:layout_height="wrap_content">
+    
+    <ImageView
+        android:id="@+id/menu_header_icon_server"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/menu_header_media_server"
+        android:tint="?attr/colorPrimaryDark"/>
+
+    <TextView
+        android:id="@+id/menu_header_server_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        tools:text="Server offline"
+        android:layout_toRightOf="@+id/menu_header_icon_server"
+        android:layout_alignTop="@+id/menu_header_icon_server"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        />
+
+    <TextView
+        android:id="@+id/menu_header_server_ip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        tools:text="Server offline"
+        android:layout_toRightOf="@+id/menu_header_icon_server"
+        android:layout_below="@+id/menu_header_server_status"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        />
+
+    <TextView
+        android:id="@+id/menu_header_server_port"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        tools:text="Server offline"
+        android:layout_toRightOf="@+id/menu_header_icon_server"
+        android:layout_below="@+id/menu_header_server_ip"
+        android:layout_marginLeft="8dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        />
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/menu_header_server_status_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        />
+
+</RelativeLayout>

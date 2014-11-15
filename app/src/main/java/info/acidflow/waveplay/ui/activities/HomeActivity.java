@@ -60,6 +60,7 @@ public class HomeActivity extends ActionBarActivity
         ButterKnife.inject( this );
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
+
         mTitle = getTitle();
 
         // Set up the drawer.
@@ -71,13 +72,11 @@ public class HomeActivity extends ActionBarActivity
             hideCurrentlyPlaying();
         }
         mAudioPlaybackServiceToken = AudioPlaybackHelper.bindToService( this, null );
-        startService( new Intent( this, WavePlayServerService.class ) );
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        stopService( new Intent( this, WavePlayServerService.class ) );
         AudioPlaybackHelper.unbindFromService( mAudioPlaybackServiceToken );
     }
 

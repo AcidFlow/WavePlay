@@ -18,7 +18,7 @@ import io.fabric.sdk.android.Fabric;
 public class WavePlayApp extends Application {
 
     private ObjectGraph mObjectGraph;
-    private EventBus mDefaultEventBus;
+    private static EventBus sServerServiceBus;
 
     @Override
     public void onCreate() {
@@ -26,6 +26,7 @@ public class WavePlayApp extends Application {
         if( !BuildConfig.DEBUG ) {
             Fabric.with(this, new Crashlytics());
         }
+        sServerServiceBus = new EventBus();
         mObjectGraph = ObjectGraph.create( getModules().toArray() );
         mObjectGraph.inject( this );
     }
@@ -33,4 +34,9 @@ public class WavePlayApp extends Application {
     private List<Object> getModules(){
         return Arrays.<Object>asList( new AppModule( this ) );
     }
+
+    public static EventBus getServerServiceBus(){
+        return sServerServiceBus;
+    }
+
 }

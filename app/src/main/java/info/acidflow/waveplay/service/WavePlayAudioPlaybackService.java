@@ -41,6 +41,7 @@ public class WavePlayAudioPlaybackService extends Service {
             if( mMediaPlayer.isPlaying() ){
                 stop();
             }
+            mMediaPlayer.reset();
             mMediaPlayer.setDataSource(path);
             mMediaPlayer.prepare();
             mMediaPlayer.start();

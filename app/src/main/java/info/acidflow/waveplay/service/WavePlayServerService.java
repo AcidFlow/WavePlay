@@ -4,6 +4,9 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+import de.greenrobot.event.EventBus;
+import info.acidflow.waveplay.WavePlayApp;
+import info.acidflow.waveplay.bus.events.server.ServerStatusEvent;
 import info.acidflow.waveplay.server.WavePlayServer;
 
 /**
@@ -20,14 +23,20 @@ public class WavePlayServerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        mServer = new WavePlayServer();
-        mServer.startServer();
+        if( mServer == null || !mServer.isAlive() ){
+            mServer = new WavePlayServer();
+            mServer.startServer();
+        }
+        WavePlayApp.getServerServiceBus().postSticky( new ServerStatusEvent( true ) );
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mServer.stopServer();
+        if( mServer != null && mServer.isAlive() ) {
+            mServer.stopServer();
+        }
+        WavePlayApp.getServerServiceBus().postSticky( new ServerStatusEvent( false ) );
     }
 }

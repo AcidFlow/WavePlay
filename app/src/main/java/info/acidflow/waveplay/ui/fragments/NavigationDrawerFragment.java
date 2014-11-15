@@ -4,6 +4,7 @@ package info.acidflow.waveplay.ui.fragments;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,10 +22,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import butterknife.ButterKnife;
 import info.acidflow.waveplay.R;
+import info.acidflow.waveplay.WavePlayApp;
+import info.acidflow.waveplay.bus.events.server.ServerStatusEvent;
+import info.acidflow.waveplay.service.WavePlayServerService;
+import info.acidflow.waveplay.ui.views.interfaces.menu.server.ServerView;
+import info.acidflow.waveplay.ui.widget.view.ServerMenuListViewHeader;
+import info.acidflow.waveplay.util.NetworkUtils;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -61,6 +72,7 @@ public class NavigationDrawerFragment extends Fragment {
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
+    private View mServerHeaderView;
 
     public NavigationDrawerFragment() {
     }
@@ -110,8 +122,42 @@ public class NavigationDrawerFragment extends Fragment {
                         getString(R.string.title_section2),
                         getString(R.string.title_section3),
                 }));
+        mServerHeaderView = new ServerMenuListViewHeader( getActivity() );
+        mDrawerListView.addHeaderView( mServerHeaderView );
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;
+    }
+
+    private View createHeaderViewServer(){
+        final View header = View.inflate( getActivity(), R.layout.list_item_menu_start_server, null );
+        SwitchCompat switchServer = ButterKnife.findById(header, R.id.menu_header_server_status_switch);
+        switchServer.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if( b ){
+                    getActivity().startService(new Intent(getActivity(), WavePlayServerService.class));
+                    TextView serverIp = ButterKnife.findById(header, R.id.menu_header_server_ip);
+                    serverIp.setText( NetworkUtils.getIpAddress( getActivity() ) );
+                }else{
+                    getActivity().stopService(new Intent(getActivity(), WavePlayServerService.class));
+                    TextView serverIp = ButterKnife.findById(header, R.id.menu_header_server_ip);
+                    serverIp.setVisibility( View.INVISIBLE );
+                }
+            }
+        });
+        return header;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        WavePlayApp.getServerServiceBus().registerSticky( this );
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        WavePlayApp.getServerServiceBus().unregister(this );
     }
 
     public boolean isDrawerOpen() {
@@ -280,5 +326,9 @@ public class NavigationDrawerFragment extends Fragment {
          * Called when an item in the navigation drawer is selected.
          */
         void onNavigationDrawerItemSelected(int position);
+    }
+
+    public void onEventMainThread( ServerStatusEvent event ){
+        ( ( ServerView ) mServerHeaderView ).refreshView( event.isOnline );
     }
 }
