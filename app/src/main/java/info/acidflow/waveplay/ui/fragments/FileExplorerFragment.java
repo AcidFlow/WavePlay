@@ -16,14 +16,16 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import de.greenrobot.event.EventBus;
 import info.acidflow.waveplay.R;
 import info.acidflow.waveplay.listeners.OnBackPressedListener;
 import info.acidflow.waveplay.server.model.GsonFile;
 import info.acidflow.waveplay.ui.activities.HomeActivity;
 import info.acidflow.waveplay.ui.adapters.FileExplorerAdapter;
-import info.acidflow.waveplay.ui.presenters.impl.FileExplorerPresenterImpl;
-import info.acidflow.waveplay.ui.presenters.interfaces.FileExplorerPresenter;
-import info.acidflow.waveplay.ui.views.interfaces.FileExplorerView;
+import info.acidflow.waveplay.ui.controllers.explorer.fs.AbstractFileExplorerController;
+import info.acidflow.waveplay.ui.controllers.explorer.fs.LocalFileSystemExplorerController;
+import info.acidflow.waveplay.ui.controllers.explorer.fs.NetworkFileSystemExplorerController;
+import info.acidflow.waveplay.ui.views.interfaces.explorer.fs.FileExplorerView;
 
 /**
  * Created by paul on 16/10/14.
@@ -33,6 +35,9 @@ public class FileExplorerFragment extends Fragment implements
 
     final public static String LOG_TAG = FileExplorerFragment.class.getSimpleName();
     final public static String SAVED_STATE_CURRENT_DIRECTORY = "saved_state_current_directory";
+    final public static String ARGS_FROM_NETWORK = "args_from_network";
+    final public static String ARGS_SERVER_IP = "args_server_ip";
+    final public static String ARGS_SERVER_PORT = "args_server_port";
 
     @InjectView( R.id.file_explorer_list_view )
     protected ListView mFilesListView;
@@ -40,25 +45,50 @@ public class FileExplorerFragment extends Fragment implements
     @InjectView( R.id.loading )
     protected ProgressBar mLoading;
 
-    private FileExplorerPresenter mPresenter;
+    private AbstractFileExplorerController mController;
+    private EventBus mLocalBus;
     private ArrayAdapter< GsonFile > mAdapter;
     private String mCurrentDirectory = null;
 
     public FileExplorerFragment() {
         super();
-        mPresenter = FileExplorerPresenterImpl.newInstance( this );
+        mLocalBus = new EventBus();
     }
 
     public static FileExplorerFragment newInstance(){
+        return newInstance( false, null, null );
+    }
+
+    public static FileExplorerFragment newInstance(boolean fromNetwork, String ip, String port ){
         FileExplorerFragment f = new FileExplorerFragment();
+        Bundle args = new Bundle();
+        args.putBoolean( ARGS_FROM_NETWORK, fromNetwork );
+        args.putString(ARGS_SERVER_IP, ip);
+        args.putString(ARGS_SERVER_PORT, port);
+        f.setArguments( args );
         return f;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        parseArguments();
         if( savedInstanceState != null ){
-            mCurrentDirectory = savedInstanceState.getString(SAVED_STATE_CURRENT_DIRECTORY, null );
+            mCurrentDirectory = savedInstanceState.getString( SAVED_STATE_CURRENT_DIRECTORY, null );
+        }
+    }
+
+    private void parseArguments(){
+        if( getArguments() != null ){
+            boolean fromNetwork = getArguments().getBoolean( ARGS_FROM_NETWORK, false );
+            if( fromNetwork ){
+                mController = new NetworkFileSystemExplorerController( this, mLocalBus,
+                        getArguments().getString( ARGS_SERVER_IP ) ,
+                        getArguments().getString( ARGS_SERVER_PORT )
+                );
+            }else{
+                mController = new LocalFileSystemExplorerController( this, mLocalBus );
+            }
         }
     }
 
@@ -86,20 +116,15 @@ public class FileExplorerFragment extends Fragment implements
     @Override
     public void onStart() {
         super.onStart();
-        if( mPresenter instanceof Fragment ){
-            getFragmentManager().beginTransaction()
-                    .add( ( Fragment ) mPresenter, String.valueOf(mPresenter.getClass().hashCode()))
-                    .commit();
-        }
+        mController.registerToLocalBus();
+        mController.getFilesFromDirectory( mCurrentDirectory );
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mCurrentDirectory = mPresenter.getCurrentRootDirectory();
-        getFragmentManager().beginTransaction()
-                .remove( (Fragment) mPresenter )
-                .commitAllowingStateLoss();
+        mCurrentDirectory = mController.getCurrentRootDirectory();
+        mController.unregisterFromLocalBus();
     }
 
     @Override
@@ -118,9 +143,9 @@ public class FileExplorerFragment extends Fragment implements
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         GsonFile file = mAdapter.getItem(i);
         if( file.isDirectory() ) {
-            mPresenter.getFilesFromDirectory( file.getFilePath() );
+            mController.getFilesFromDirectory( file.getFilePath() );
         }else{
-            mPresenter.openFile( file.getFilePath() );
+            mController.openFile( file.getFilePath() );
         }
     }
 
@@ -148,16 +173,9 @@ public class FileExplorerFragment extends Fragment implements
         }
     }
 
-
-
-    @Override
-    public void onPresenterReady() {
-        mPresenter.getFilesFromDirectory(mCurrentDirectory);
-    }
-
     @Override
     public boolean onBackPressedCaught() {
-        return mPresenter.onBackPressed();
+        return mController.onBackPressed();
     }
 
 

@@ -1,4 +1,19 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/repo' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/repo' }
+}
+
 
 
 
@@ -30,7 +45,7 @@ android {
 
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -46,11 +61,15 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:21.0.0'
-    compile 'com.android.support:appcompat-v7:21.0.+'
+    compile 'com.android.support:support-v4:21.+'
+    compile 'com.android.support:appcompat-v7:21.+'
     compile 'com.squareup.retrofit:retrofit:1.7.0'
     compile 'com.jakewharton:butterknife:5.1.2'
     compile 'com.squareup.dagger:dagger:1.2.+'
+    compile 'de.greenrobot:eventbus:2.4.0'
     provided 'com.squareup.dagger:dagger-compiler:1.2.+'
+    compile('com.crashlytics.sdk.android:crashlytics:2.0.1@aar') {
+        transitive = true;
+    }
 }
 

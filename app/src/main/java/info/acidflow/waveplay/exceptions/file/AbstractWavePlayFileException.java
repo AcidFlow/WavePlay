@@ -2,6 +2,9 @@ package info.acidflow.waveplay.exceptions.file;
 
 import android.util.Log;
 
+import info.acidflow.waveplay.BuildConfig;
+import io.fabric.sdk.android.Fabric;
+
 /**
  * Created by paul on 16/10/14.
  */
@@ -26,6 +29,10 @@ public class AbstractWavePlayFileException extends Exception {
     }
 
     public void handleException(){
-        Log.e( LOG_TAG, "Exception raised by WavePlayServer", this );
+        if( BuildConfig.DEBUG ) {
+            Log.e(LOG_TAG, "Exception raised by WavePlayServer", this);
+        }else {
+            Fabric.getLogger().e(LOG_TAG, getMessage(), this );
+        }
     }
 }

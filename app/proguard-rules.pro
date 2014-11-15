@@ -19,4 +19,7 @@
 -dontwarn butterknife.internal.**
 -keep class **$$ViewInjector { *; }
 -keepnames class * { @butterknife.InjectView *;}
+-keepclassmembers class ** {
+    public void onEvent*(**);
+}
 

@@ -4,13 +4,8 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.os.RemoteException;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,11 +19,9 @@ import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import info.acidflow.waveplay.IWavePlayMusicService;
 import info.acidflow.waveplay.R;
 import info.acidflow.waveplay.helpers.AudioPlaybackHelper;
 import info.acidflow.waveplay.listeners.OnBackPressedListener;
-import info.acidflow.waveplay.service.WavePlayAudioPlaybackService;
 import info.acidflow.waveplay.service.WavePlayServerService;
 import info.acidflow.waveplay.ui.fragments.FileExplorerFragment;
 import info.acidflow.waveplay.ui.fragments.NavigationDrawerFragment;
@@ -58,12 +51,7 @@ public class HomeActivity extends ActionBarActivity
 
     private AudioPlaybackHelper.AudioPlaybackServiceToken mAudioPlaybackServiceToken;
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        stopService( new Intent( this, WavePlayServerService.class ) );
-        AudioPlaybackHelper.unbindFromService( mAudioPlaybackServiceToken );
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,11 +67,18 @@ public class HomeActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout),
                 mToolbar );
-        hideCurrentlyPlaying();
+        if( savedInstanceState == null ) {
+            hideCurrentlyPlaying();
+        }
         mAudioPlaybackServiceToken = AudioPlaybackHelper.bindToService( this, null );
         startService( new Intent( this, WavePlayServerService.class ) );
+    }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService( new Intent( this, WavePlayServerService.class ) );
+        AudioPlaybackHelper.unbindFromService( mAudioPlaybackServiceToken );
     }
 
     @Override
@@ -95,7 +90,7 @@ public class HomeActivity extends ActionBarActivity
                 fragment = FileExplorerFragment.newInstance();
                 break;
             default:
-                fragment = PlaceholderFragment.newInstance(position + 1);
+                fragment = FileExplorerFragment.newInstance( true, "192.168.0.14", "8080" );
                 break;
         }
         FragmentManager fragmentManager = getFragmentManager();

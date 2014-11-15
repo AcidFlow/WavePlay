@@ -2,7 +2,6 @@ package info.acidflow.waveplay.service;
 
 import android.app.Service;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.IBinder;
 
 import info.acidflow.waveplay.server.WavePlayServer;
@@ -13,7 +12,6 @@ import info.acidflow.waveplay.server.WavePlayServer;
 public class WavePlayServerService extends Service {
 
     private WavePlayServer mServer;
-    private MediaPlayer mMediaPlayer;
 
     @Override
     public IBinder onBind(Intent intent) {

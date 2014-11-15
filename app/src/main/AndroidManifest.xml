@@ -22,6 +22,7 @@
 
         <service android:name=".service.WavePlayServerService" android:exported="false" />
         <service android:name=".service.WavePlayAudioPlaybackService" android:exported="false" />
+        <meta-data android:name="com.crashlytics.ApiKey" android:value="c0dbca37364d29dbaa3fd1f301fcad8b3b04ab60"/>
     </application>
 
 </manifest>
