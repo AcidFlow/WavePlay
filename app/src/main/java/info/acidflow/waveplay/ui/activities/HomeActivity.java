@@ -23,6 +23,8 @@ import info.acidflow.waveplay.R;
 import info.acidflow.waveplay.helpers.AudioPlaybackHelper;
 import info.acidflow.waveplay.listeners.OnBackPressedListener;
 import info.acidflow.waveplay.service.WavePlayServerService;
+import info.acidflow.waveplay.ui.controllers.ChooseServerController;
+import info.acidflow.waveplay.ui.fragments.ChooseServerFragment;
 import info.acidflow.waveplay.ui.fragments.FileExplorerFragment;
 import info.acidflow.waveplay.ui.fragments.NavigationDrawerFragment;
 
@@ -87,6 +89,9 @@ public class HomeActivity extends ActionBarActivity
         switch ( position ){
             case 0:
                 fragment = FileExplorerFragment.newInstance();
+                break;
+            case 1:
+                fragment = ChooseServerFragment.newInstance();
                 break;
             default:
                 fragment = FileExplorerFragment.newInstance( true, "192.168.0.14", "8080" );

@@ -13,11 +13,11 @@ import info.acidflow.waveplay.server.reponses.WavePlayServerResponseFactory;
 public class WavePlayServer extends NanoHTTPD {
 
     final static String LOG_TAG = WavePlayServer.class.getSimpleName();
-
+    final public static int DEFAULT_PORT = 8080;
     private boolean isServerStarted;
 
     public WavePlayServer() {
-        super( 8080 );
+        super( DEFAULT_PORT );
         isServerStarted = false;
     }
 
@@ -49,7 +49,6 @@ public class WavePlayServer extends NanoHTTPD {
         }else{
             Log.i(LOG_TAG, "Server already stopped or not started" );
         }
-
     }
 
 
