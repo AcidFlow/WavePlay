@@ -24,4 +24,16 @@
         android:layout_marginLeft="@dimen/spacing_default"
         />
 
+    <TextView
+        android:id="@+id/file_children"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:layout_toEndOf="@+id/file_icon"
+        android:layout_toRightOf="@+id/file_icon"
+        android:layout_marginStart="@dimen/spacing_default"
+        android:layout_marginLeft="@dimen/spacing_default"
+        android:layout_below="@id/file_name"
+        />
+
 </RelativeLayout>

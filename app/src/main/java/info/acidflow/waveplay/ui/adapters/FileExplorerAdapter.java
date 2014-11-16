@@ -31,8 +31,21 @@ public class FileExplorerAdapter extends ArrayAdapter<GsonFile> {
                     .inflate(R.layout.list_item_file_explorer, parent, false);
             convertView.setTag( new FileExplorerViewHolder( convertView ) );
         }
+        GsonFile item = getItem( position );
         FileExplorerViewHolder holder = (FileExplorerViewHolder) convertView.getTag();
-        holder.fileName.setText(getItem(position).getFileName());
+        holder.fileName.setText( item.getFileName() );
+        if( item.isDirectory() ){
+            holder.fileChildren.setText(
+                    getContext().getResources().getQuantityString(
+                            R.plurals.adapter_file_explorer_children,
+                            item.getChildrenCount(),
+                            item.getChildrenCount()
+                    )
+            );
+            holder.fileChildren.setVisibility( View.VISIBLE );
+        }else{
+            holder.fileChildren.setVisibility( View.INVISIBLE );
+        }
         return convertView;
     }
 
@@ -44,6 +57,9 @@ public class FileExplorerAdapter extends ArrayAdapter<GsonFile> {
 
         @InjectView( R.id.file_name )
         TextView fileName;
+
+        @InjectView( R.id.file_children )
+        TextView fileChildren;
 
         FileExplorerViewHolder( View v ){
             ButterKnife.inject( this, v );

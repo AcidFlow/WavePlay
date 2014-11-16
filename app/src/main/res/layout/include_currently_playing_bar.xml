@@ -28,15 +28,17 @@
 
     <ImageButton
         android:id="@+id/currently_playing_pause"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher"
+        android:layout_width="@dimen/clickable_area_min"
+        android:layout_height="@dimen/clickable_area_min"
         android:background="@null"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/currently_playing_seek"
-        android:layout_marginRight="@dimen/spacing_default"
-        android:layout_marginEnd="@dimen/spacing_default"
+        android:layout_marginRight="@dimen/spacing_small"
+        android:layout_marginEnd="@dimen/spacing_small"
+        android:layout_marginBottom="@dimen/spacing_small"
+        tools:src="@drawable/play"
+        android:tint="?attr/colorPrimaryDark"
         />
 
 </RelativeLayout>

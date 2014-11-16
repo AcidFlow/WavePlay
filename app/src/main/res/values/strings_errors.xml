@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_network_default">Network error, please check your configuration</string>
+    <string name="error_connection_refused">Server unreachable, please check your configuration</string>
+    <string name="error_http_default">The server responded with an error</string>
+</resources>

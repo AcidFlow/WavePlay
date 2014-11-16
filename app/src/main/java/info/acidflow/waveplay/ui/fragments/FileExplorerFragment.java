@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -179,9 +180,34 @@ public class FileExplorerFragment extends Fragment implements
     }
 
 
+    @Override
+    public void showServerUnreachableError() {
+        Toast.makeText( getActivity(), getString( R.string.error_connection_refused ), Toast.LENGTH_LONG )
+                .show();
+        getFragmentManager().beginTransaction()
+                .replace( R.id.container, ChooseServerFragment.newInstance() )
+                .commit();
+    }
+
+    @Override
+    public void showNetworkError() {
+        Toast.makeText( getActivity(), getString( R.string.error_network_default ), Toast.LENGTH_LONG )
+                .show();
+        getFragmentManager().beginTransaction()
+                .replace( R.id.container, ChooseServerFragment.newInstance() )
+                .commit();
+    }
+
+    @Override
+    public void showHttpError() {
+        Toast.makeText( getActivity(), getString( R.string.error_http_default ), Toast.LENGTH_LONG )
+                .show();
+    }
+
     // TODO Redo code below this point. It was for testing purpose
     @Override
     public void showCurrentlyPlaying() {
         ((HomeActivity) getActivity()).showCurrentlyPlaying();
     }
+
 }

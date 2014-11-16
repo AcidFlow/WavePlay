@@ -25,12 +25,21 @@ public class GsonFile {
     @SerializedName("mimeType")
     private String mMimeType;
 
+    @SerializedName("childrenCount")
+    private int mChildrenCount;
+
 
     public GsonFile( File file ) {
         mFilePath = file.getAbsolutePath();
         mFileName = file.getName() ;
         isDirectory = file.isDirectory() ;
         mMimeType = FileUtils.guessMimeType( file );
+        if( file.isDirectory() ){
+            mChildrenCount = file.list().length;
+        }else{
+            mChildrenCount = 0;
+        }
+
     }
 
     public String getFileName() {
@@ -47,5 +56,9 @@ public class GsonFile {
 
     public String getFilePath() {
         return mFilePath;
+    }
+
+    public int getChildrenCount() {
+        return mChildrenCount;
     }
 }

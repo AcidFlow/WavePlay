@@ -1,9 +1,12 @@
 package info.acidflow.waveplay.ui.controllers.explorer.fs;
 
+import java.net.ConnectException;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import info.acidflow.waveplay.bus.events.fileexplorer.DirectoryListedEvent;
+import info.acidflow.waveplay.bus.events.server.error.HttpErrorEvent;
+import info.acidflow.waveplay.bus.events.server.error.NetworkErrorEvent;
 import info.acidflow.waveplay.server.model.GsonFile;
 import info.acidflow.waveplay.ui.views.interfaces.explorer.fs.FileExplorerView;
 
@@ -66,5 +69,17 @@ public abstract class AbstractFileExplorerController {
         }else{
             onDirectoryListingError();
         }
+    }
+
+    public void onEventMainThread( NetworkErrorEvent event ){
+        if( event.error.getCause() instanceof ConnectException){
+            mFileExplorerView.showServerUnreachableError();
+        }else{
+            mFileExplorerView.showNetworkError();
+        }
+    }
+
+    public void onEventMainThread( HttpErrorEvent event ){
+        mFileExplorerView.showHttpError();
     }
 }

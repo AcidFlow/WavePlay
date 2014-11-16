@@ -21,6 +21,7 @@ public class WavePlayApp extends Application {
 
     private ObjectGraph mObjectGraph;
     private static EventBus sServerServiceBus;
+    private static EventBus sPlayerBus;
 
     @Override
     public void onCreate() {
@@ -32,6 +33,7 @@ public class WavePlayApp extends Application {
             Timber.plant( new Timber.DebugTree() );
         }
         sServerServiceBus = new EventBus();
+        sPlayerBus = new EventBus();
         mObjectGraph = ObjectGraph.create( getModules().toArray() );
         mObjectGraph.inject( this );
     }
@@ -42,6 +44,10 @@ public class WavePlayApp extends Application {
 
     public static EventBus getServerServiceBus(){
         return sServerServiceBus;
+    }
+
+    public static EventBus getPlayerBus(){
+        return sPlayerBus;
     }
 
 }

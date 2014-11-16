@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fragment_choose_server_input_server_ip_hint">Server IP</string>
+    <string name="fragment_choose_server_input_server_port_hint">Server port</string>
+    <string name="fragment_choose_server_input_server_connect">Connect</string>
+    <string name="fragment_choose_server_error_ip_invalid">Invalid IP Address</string>
+</resources>

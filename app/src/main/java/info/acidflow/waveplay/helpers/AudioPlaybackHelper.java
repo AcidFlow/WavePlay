@@ -119,4 +119,32 @@ public class AudioPlaybackHelper {
     }
 
 
+    /**
+     * @return The current position time of the track
+     */
+    public static final long position() {
+        if (mService != null) {
+            try {
+                return mService.position();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * @return The total length of the current track
+     */
+    public static final long duration() {
+        if (mService != null) {
+            try {
+                return mService.duration();
+            } catch (final RemoteException ignored) {
+            }
+        }
+        return 0;
+    }
+
+
+
 }

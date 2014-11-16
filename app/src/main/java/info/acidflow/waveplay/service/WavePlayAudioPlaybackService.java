@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 import info.acidflow.waveplay.IWavePlayMusicService;
+import info.acidflow.waveplay.WavePlayApp;
+import info.acidflow.waveplay.bus.events.player.PauseEvent;
+import info.acidflow.waveplay.bus.events.player.StartPlayingEvent;
 import timber.log.Timber;
 
 /**
@@ -46,7 +49,7 @@ public class WavePlayAudioPlaybackService extends Service {
             mMediaPlayer.setDataSource(path);
             mMediaPlayer.prepare();
             Timber.i( "File duration : %d ms", mMediaPlayer.getDuration() );
-            mMediaPlayer.start();
+            play();
         }catch ( IOException e){
             Timber.e( e ,"IOException when opening file %s ", path );
         }
@@ -59,18 +62,28 @@ public class WavePlayAudioPlaybackService extends Service {
 
     public void pause(){
         mMediaPlayer.pause();
+        WavePlayApp.getPlayerBus().post( new PauseEvent() );
     }
 
     public void play(){
         mMediaPlayer.start();
+        WavePlayApp.getPlayerBus().post( new StartPlayingEvent() );
     }
 
     public void playOrPause(){
         if( mMediaPlayer.isPlaying() ){
-            mMediaPlayer.pause();
+            pause();
         }else{
-            mMediaPlayer.start();
+            play();
         }
+    }
+
+    public long position(){
+        return mMediaPlayer.getCurrentPosition();
+    }
+
+    public long duration(){
+        return mMediaPlayer.getDuration();
     }
 
 
@@ -112,6 +125,17 @@ public class WavePlayAudioPlaybackService extends Service {
         public void playOrPause(){
             mServiceWeakRef.get().playOrPause();
         }
+
+        @Override
+        public long position(){
+            return mServiceWeakRef.get().position();
+        }
+
+        @Override
+        public long duration(){
+            return mServiceWeakRef.get().duration();
+        }
+
 
 
     }

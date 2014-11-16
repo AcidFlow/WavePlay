@@ -14,12 +14,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import info.acidflow.waveplay.R;
+import info.acidflow.waveplay.WavePlayApp;
+import info.acidflow.waveplay.bus.events.player.PauseEvent;
+import info.acidflow.waveplay.bus.events.player.StartPlayingEvent;
 import info.acidflow.waveplay.helpers.AudioPlaybackHelper;
 import info.acidflow.waveplay.listeners.OnBackPressedListener;
 import info.acidflow.waveplay.service.WavePlayServerService;
@@ -77,6 +82,18 @@ public class HomeActivity extends ActionBarActivity
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        WavePlayApp.getPlayerBus().register( this );
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        WavePlayApp.getPlayerBus().unregister(this);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         AudioPlaybackHelper.unbindFromService( mAudioPlaybackServiceToken );
@@ -87,14 +104,14 @@ public class HomeActivity extends ActionBarActivity
         // update the main content by replacing fragments
         Fragment fragment = null;
         switch ( position ){
-            case 0:
+            case 1:
                 fragment = FileExplorerFragment.newInstance();
                 break;
-            case 1:
+            case 2:
                 fragment = ChooseServerFragment.newInstance();
                 break;
             default:
-                fragment = FileExplorerFragment.newInstance( true, "192.168.0.14", "8080" );
+
                 break;
         }
         FragmentManager fragmentManager = getFragmentManager();
@@ -106,13 +123,10 @@ public class HomeActivity extends ActionBarActivity
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
-                mTitle = getString(R.string.title_section1);
+                mTitle = getString(R.string.navigation_drawer_title_local_explorer);
                 break;
             case 2:
-                mTitle = getString(R.string.title_section2);
-                break;
-            case 3:
-                mTitle = getString(R.string.title_section3);
+                mTitle = getString(R.string.navigation_drawer_title_network_explorer);
                 break;
         }
     }
@@ -215,5 +229,17 @@ public class HomeActivity extends ActionBarActivity
     @OnClick( R.id.currently_playing_pause )
     public void pauseCurrentPlaying(){
         AudioPlaybackHelper.playOrPause();
+    }
+
+    public void onEventMainThread( StartPlayingEvent event ){
+        ImageButton playPauseButton = ButterKnife
+                .findById(mCurrentlyPlayingView, R.id.currently_playing_pause);
+        playPauseButton.setImageDrawable(getResources().getDrawable(R.drawable.pause));
+    }
+
+    public void onEventMainThread( PauseEvent event ){
+        ImageButton playPauseButton = ButterKnife
+            .findById( mCurrentlyPlayingView, R.id.currently_playing_pause );
+        playPauseButton.setImageDrawable( getResources().getDrawable( R.drawable.play ) );
     }
 }

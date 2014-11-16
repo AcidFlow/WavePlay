@@ -14,4 +14,8 @@ public interface FileExplorerView  extends LoadingView {
 
     public void showCurrentlyPlaying();
 
+    public void showServerUnreachableError();
+    public void showNetworkError();
+    public void showHttpError();
+
 }
