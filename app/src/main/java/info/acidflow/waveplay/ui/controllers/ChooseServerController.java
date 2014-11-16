@@ -1,7 +1,6 @@
 package info.acidflow.waveplay.ui.controllers;
 
 import android.app.Activity;
-import android.content.Context;
 
 import info.acidflow.waveplay.R;
 import info.acidflow.waveplay.server.WavePlayServer;

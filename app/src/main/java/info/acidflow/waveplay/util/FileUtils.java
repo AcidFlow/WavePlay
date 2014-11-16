@@ -14,6 +14,7 @@ import java.util.List;
 
 import info.acidflow.waveplay.exceptions.file.FileNotOnExternalStorageException;
 import info.acidflow.waveplay.server.model.GsonFile;
+import timber.log.Timber;
 
 /**
  * Created by paul on 15/10/14.
@@ -37,10 +38,15 @@ public class FileUtils {
                     is.close();
                 }
             } catch (IOException e) {
-                Log.e(LOG_TAG, "I/O Error", e);
+                Timber.e( e, "IOException when guessing mimtype for file %s", file.getName() );
             }
             if (mime == null) {
-                mime = URLConnection.guessContentTypeFromName( file.getName() );
+                try {
+                    mime = URLConnection.guessContentTypeFromName(file.getName());
+                }catch ( StringIndexOutOfBoundsException e ){
+                    Timber.e( e, "Error when guessing mimtype from extension for file %s",
+                            file.getName() );
+                }
             }
         }
         return mime;

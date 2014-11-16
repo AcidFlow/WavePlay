@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import fi.iki.elonen.NanoHTTPD;
 import info.acidflow.waveplay.server.reponses.WavePlayServerResponseFactory;
+import timber.log.Timber;
 
 /**
  * Created by AcidFlow on 12/10/2014.
@@ -33,11 +34,11 @@ public class WavePlayServer extends NanoHTTPD {
                 start();
                 isServerStarted = true;
             } catch ( IOException e ) {
-                Log.e( LOG_TAG, e.toString() );
+                Timber.e( e, "IO Exception when starting server" );
                 isServerStarted = false;
             }
         }else{
-            Log.i( LOG_TAG, "Server is already running" );
+            Timber.i( "Server is already running" );
         }
         return isServerStarted;
     }
@@ -47,7 +48,7 @@ public class WavePlayServer extends NanoHTTPD {
             closeAllConnections();
             stop();
         }else{
-            Log.i(LOG_TAG, "Server already stopped or not started" );
+            Timber.i( "Server already stopped or not started" );
         }
     }
 

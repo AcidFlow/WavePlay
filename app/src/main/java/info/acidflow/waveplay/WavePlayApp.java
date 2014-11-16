@@ -10,7 +10,9 @@ import java.util.List;
 import dagger.ObjectGraph;
 import de.greenrobot.event.EventBus;
 import info.acidflow.waveplay.dagger.modules.AppModule;
+import info.acidflow.waveplay.timber.loggers.CrashReportingTree;
 import io.fabric.sdk.android.Fabric;
+import timber.log.Timber;
 
 /**
  * Created by paul on 25/10/14.
@@ -25,6 +27,9 @@ public class WavePlayApp extends Application {
         super.onCreate();
         if( !BuildConfig.DEBUG ) {
             Fabric.with(this, new Crashlytics());
+            Timber.plant( new CrashReportingTree() );
+        }else{
+            Timber.plant( new Timber.DebugTree() );
         }
         sServerServiceBus = new EventBus();
         mObjectGraph = ObjectGraph.create( getModules().toArray() );

@@ -26,7 +26,6 @@ public class NetworkFileSystemExplorerInteractor extends AbstractFileSystemExplo
         super( localBus );
         mServerIP = ip;
         mServerPort = port;
-        Log.i("PLop", APIUri.getBaseUri( mServerIP, mServerPort ).toString() );
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint( APIUri.getBaseUri( mServerIP, mServerPort ).toString() )
                 .build();
@@ -41,7 +40,6 @@ public class NetworkFileSystemExplorerInteractor extends AbstractFileSystemExplo
 
     @Override
     public void openFile(String filePath) {
-        Log.i("Plop2", APIUri.getListenUri(mServerIP, mServerPort, filePath).toString() );
         AudioPlaybackHelper.openFile( APIUri.getListenUri(mServerIP, mServerPort, filePath).toString() );
     }
 }

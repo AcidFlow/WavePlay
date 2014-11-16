@@ -2,6 +2,8 @@ package info.acidflow.waveplay.exceptions.server;
 
 import android.util.Log;
 
+import timber.log.Timber;
+
 /**
  * Created by paul on 16/10/14.
  */
@@ -26,6 +28,6 @@ public class AbstractWavePlayServerException extends Exception {
     }
 
     public void handleException(){
-        Log.e( LOG_TAG, "Exception raised by WavePlayServer", this );
+        Timber.e( this, "Exception raised by WavePlayServer" );
     }
 }

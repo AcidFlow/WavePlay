@@ -8,19 +8,12 @@
     >
 
 
-    <include
-        android:id="@+id/currently_playing_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        layout="@layout/include_currently_playing_bar"
-        android:layout_alignParentBottom="true"
-        />
-
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/home_activity_toolbar"
+        android:layout_above="@+id/currently_playing_layout"
         >
 
         <!-- As the main content view, the view below consumes the entire
@@ -46,6 +39,14 @@
             tools:layout="@layout/fragment_navigation_drawer" />
 
     </android.support.v4.widget.DrawerLayout>
+
+    <include
+        android:id="@+id/currently_playing_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/include_currently_playing_bar"
+        android:layout_alignParentBottom="true"
+        />
 
     <include
         android:id="@+id/home_activity_toolbar"

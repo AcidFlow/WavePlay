@@ -4,6 +4,7 @@ import android.util.Log;
 
 import info.acidflow.waveplay.BuildConfig;
 import io.fabric.sdk.android.Fabric;
+import timber.log.Timber;
 
 /**
  * Created by paul on 16/10/14.
@@ -29,10 +30,6 @@ public class AbstractWavePlayFileException extends Exception {
     }
 
     public void handleException(){
-        if( BuildConfig.DEBUG ) {
-            Log.e(LOG_TAG, "Exception raised by WavePlayServer", this);
-        }else {
-            Fabric.getLogger().e(LOG_TAG, getMessage(), this );
-        }
+        Timber.e( this, "Exception raised by WavePlayServer" );
     }
 }

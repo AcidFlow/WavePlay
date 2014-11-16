@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 import info.acidflow.waveplay.IWavePlayMusicService;
+import timber.log.Timber;
 
 /**
  * Created by paul on 16/10/14.
@@ -44,9 +45,10 @@ public class WavePlayAudioPlaybackService extends Service {
             mMediaPlayer.reset();
             mMediaPlayer.setDataSource(path);
             mMediaPlayer.prepare();
+            Timber.i( "File duration : %d ms", mMediaPlayer.getDuration() );
             mMediaPlayer.start();
         }catch ( IOException e){
-            Log.e(getClass().getSimpleName(), "Exception", e );
+            Timber.e( e ,"IOException when opening file %s ", path );
         }
     }
 
